@@ -1,0 +1,30 @@
+{
+    "name": "backend",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1",
+        "start": "node index.js",
+        "devStart": "nodemon index.js"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/cjsidler/secretSanta-backend.git"
+    },
+    "author": "",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/cjsidler/secretSanta-backend/issues"
+    },
+    "homepage": "https://github.com/cjsidler/secretSanta-backend#readme",
+    "dependencies": {
+        "express": "^4.17.3",
+        "mongoose": "^6.2.3",
+        "mongoose-type-email": "^1.1.2"
+    },
+    "devDependencies": {
+        "dotenv": "^16.0.0",
+        "nodemon": "^2.0.15"
+    }
+}
