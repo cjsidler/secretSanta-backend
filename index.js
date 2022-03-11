@@ -5,17 +5,8 @@ if (process.env.NODE_ENV !== "production") {
 const express = require("express");
 const app = express();
 
-if (process.env.NODE_ENV !== "production") {
-    const cors = require("cors");
-    app.use(cors());
-} else {
-    const cors = require("cors");
-    const corsOptions = {
-        origin: "https://secret-santa-app-frontend.herokuapp.com/",
-        optionsSuccessStatus: 200,
-    };
-    app.use(cors(corsOptions));
-}
+const cors = require("cors");
+app.use(cors());
 
 const port = process.env.PORT || 80;
 const mongoose = require("mongoose");
