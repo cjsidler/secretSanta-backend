@@ -8,6 +8,12 @@ const app = express();
 if (process.env.NODE_ENV !== "production") {
     const cors = require("cors");
     app.use(cors());
+} else {
+    const corsOptions = {
+        origin: "https://secret-santa-app-frontend.herokuapp.com/",
+        optionsSuccessStatus: 200,
+    };
+    app.use(cors(corsOptions));
 }
 
 const port = process.env.PORT || 80;
