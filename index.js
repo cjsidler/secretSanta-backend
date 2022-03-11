@@ -4,6 +4,12 @@ if (process.env.NODE_ENV !== "production") {
 
 const express = require("express");
 const app = express();
+
+if (process.env.NODE_ENV !== "production") {
+    const cors = require("cors");
+    app.use(cors());
+}
+
 const port = process.env.PORT || 80;
 const mongoose = require("mongoose");
 const User = require("./models/user");
@@ -76,7 +82,9 @@ const addGiftExchange = async (newGiftExchange) => {
     // Grab user by the given userId
     const user = await User.findById(_id);
 
-    // TODO: Handle if user is not found.
+    if (!user) {
+        throw "User with provided user ID not found.";
+    }
 
     // Add new gift exchange to user's exchanges if its name is unique
     if (user.giftExchanges.some((xchg) => xchg.name === name)) {
@@ -210,8 +218,8 @@ const addParticipant = async (requestDetails) => {
         throw "A drawing ID must be provided.";
     } else if (!newParticipant) {
         throw "A new participant object must be provided";
-    } else if (!newParticipant.name || !newParticipant.email) {
-        throw "A name and email must be provided for the new participant.";
+    } else if (!newParticipant.name) {
+        throw "A name must be provided for the new participant.";
     }
 
     const user = await User.findById(userId);
@@ -381,6 +389,26 @@ app.get("/", (req, res) => {
     res.send("secretSanta Backend is up and running!");
 });
 
+app.get("/user/exists/:email", async (req, res) => {
+    // Return true/false if a user exists in the database.
+    const { email } = req.params;
+
+    if (!email) {
+        res.status(400).send("Must include an email address to get the user's data.");
+    }
+
+    try {
+        const user = await User.findOne({ email: email });
+        if (user) {
+            res.send(true);
+        } else {
+            res.send(false);
+        }
+    } catch (error) {
+        res.status(500).json({ Error: `Request failed. ${error}` });
+    }
+});
+
 app.get("/user/:email", async (req, res) => {
     // Get user data for a specified user by e-mail address
     const { email } = req.params;
@@ -394,7 +422,7 @@ app.get("/user/:email", async (req, res) => {
         if (user) {
             res.status(200).json(user);
         } else {
-            res.status(500).json({ Error: "Request failed. User not found." });
+            res.status(404).json({ Error: "Request failed. User not found." });
         }
     } catch (error) {
         res.status(500).json({ Error: `Request failed. ${error}` });
@@ -491,7 +519,7 @@ app.delete("/drawing", (req, res) => {
 
 app.post("/participant", (req, res) => {
     // Add a participant. Request body should be a JSON object with userId, giftExchangeId, drawingId,
-    // and newParticipant (object with )
+    // and newParticipant (object with name and email)
     addParticipant(req.body)
         .then((newParticipant) => {
             res.status(201).json(newParticipant);
@@ -516,7 +544,7 @@ app.patch("/participant", (req, res) => {
     // Update a participant's name and email.
     updateParticipant(req.body)
         .then((modifiedObj) => {
-            if (modifiedObj.modifiedCount === 1) {
+            if (modifiedObj.matchedCount === 1) {
                 res.status(200).json(modifiedObj);
             } else {
                 res.status(404).json({ Error: "Resource not found or updated.", modifiedObj });

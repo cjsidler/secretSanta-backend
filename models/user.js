@@ -6,7 +6,7 @@ const reqNumber = { type: Number, required: true };
 
 const participantSchema = new mongoose.Schema({
     name: reqString,
-    email: mongoose.SchemaTypes.Email,
+    email: { type: mongoose.SchemaTypes.Email, allowBlank: true },
     secretDraw: { type: String, default: "" },
     restrictions: [String],
 });
