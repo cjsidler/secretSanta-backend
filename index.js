@@ -311,7 +311,7 @@ const updateParticipant = async (updateDetails) => {
     if (updates.name) {
         setObject["giftExchanges.$[i].draws.$[j].participants.$[k].name"] = updates.name;
     }
-    if (updates.email) {
+    if (updates.hasOwnProperty("email")) {
         setObject["giftExchanges.$[i].draws.$[j].participants.$[k].email"] = updates.email;
     }
     if (updates.hasOwnProperty("secretDraw")) {
